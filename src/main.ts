@@ -1,34 +1,20 @@
-import http from 'http';
-import Express from './application/request-handlers/express';
-import Config from './domain/config';
+import { startApp, closeApp } from './application';
 import DependencyInjector from './common/dependency-injector';
-import addApplication, { setUpServerRequestHandler } from './application';
-import addControllers from './controllers';
-import addInfrastructures from './infrastructures';
-import addDomains from './domain';
-import addCommands from './commands';
-import Router from './application/router';
+
+const DI = DependencyInjector.Container;
 
 async function main() {
-    const DI = DependencyInjector.Container;
+    let code = 0;
 
-    addDomains(DI);
-    addInfrastructures(DI);
-    addCommands(DI);
-    addControllers(DI);
-    addApplication(DI);
-
-    const config = DI.getInstance(Config);
-    const serverRquestHandler = DI.getInstance(Express);
-    const router = DI.getInstance(Router);
-
-    setUpServerRequestHandler(DI, serverRquestHandler, router);
-
-    const server = http.createServer(serverRquestHandler.getHandler());
-    server.listen(config.port, () => {
-        console.log('Server listening on port', config.port);
-    });
+    try {
+        await startApp(DI);
+    } catch (error) {
+        code = 1;
+        await closeApp(DI);
+    } finally {
+        process.exit(code);
+    }
 }
 
 // TODO: Handle error exits
-main().catch(console.error);
+main();

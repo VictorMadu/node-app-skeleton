@@ -11,7 +11,7 @@ import Controller, {
     Request,
     Response,
 } from '../../common/interfaces/controller';
-import { RequestHandler } from '../../common/interfaces/request-handler';
+import RequestHandler from './request-handler';
 import Config from '../../domain/config';
 
 export default class Express implements RequestHandler {

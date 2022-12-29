@@ -1,7 +1,7 @@
-import Router from './router';
-import { ErrorHandler, Request } from './controller';
+import Router from '../../common/interfaces/router';
+import { ErrorHandler, Request } from '../../common/interfaces/controller';
 
-export interface RequestHandler extends Router {
+export default interface RequestHandler extends Router {
     addHelmet(): void;
     addCors(): void;
     addRequestBodyParser(): void;
