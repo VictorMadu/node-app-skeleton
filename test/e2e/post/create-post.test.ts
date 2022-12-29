@@ -10,6 +10,7 @@ describe('test for Post controllers', () => {
 
     beforeAll(async () => {
         await startApp(DI);
+        // TODO: Set up database
         app = DI.getInstance(RequestHandlerManager).getHandler();
     });
 

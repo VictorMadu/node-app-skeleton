@@ -11,9 +11,10 @@ export class Post {
         const post = new Post();
 
         post.postId = data.postId;
-        post.postId = data.postId;
-        post.postId = data.postId;
-        post.postId = data.postId;
+        post.title = data.title ?? post.title;
+        post.content = data.content ?? post.content;
+        post.createdAt = data.createdAt ?? post.createdAt;
+        post.deletedAt = data.deletedAt ?? post.deletedAt;
 
         return post;
     }
