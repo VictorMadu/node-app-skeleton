@@ -1,7 +1,6 @@
 import CreateCommandWithValidator from '../commands/post/create-command/create-command-validator';
 import DeleteCommandWithValidator from '../commands/post/delete-command/delete-command-validator';
 import EditCommandWithValidator from '../commands/post/edit-command/edit-command-validator';
-import GetAllCommandExecutor from '../commands/post/get-all-command/get-all-command-executor';
 import GetAllCommandWithValidator from '../commands/post/get-all-command/get-all-command-validator';
 import DependencyInjector from '../common/dependency-injector';
 import { CreatePost, DeletePost, EditPost, GetPosts } from './post-controllers';

@@ -1,5 +1,5 @@
 import DependencyInjector from '../common/dependency-injector';
-import PostmarkEmailMessager from '../infrastructures/repository/memory/messagers/postmark-email-messager';
+import PostmarkEmailMessager from '../infrastructures/messagers/postmark-email-messager';
 import PostRepository from '../infrastructures/repository/memory/post.repository';
 import CreateCommandExecutor from './post/create-command/create-command-executor';
 import CreateCommandWithValidator from './post/create-command/create-command-validator';
