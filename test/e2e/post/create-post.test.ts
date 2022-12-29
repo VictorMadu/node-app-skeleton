@@ -1,22 +1,35 @@
 import supertest from 'supertest';
+import pfs from 'fs/promises';
 import { closeApp, startApp } from '../../../src/application';
 import RequestHandler from '../../../src/application/request-handlers/request-handler';
 import RequestHandlerManager from '../../../src/application/request-handlers/request-handler-manager';
 import DependencyInjector from '../../../src/common/dependency-injector';
+import Config from '../../../src/domain/config';
 
 describe('test for Post controllers', () => {
     const DI = DependencyInjector.Container;
     let app: (request: any, response: any) => any;
+    let config: Config;
 
     beforeAll(async () => {
         await startApp(DI);
-        // TODO: Set up database
+
         app = DI.getInstance(RequestHandlerManager).getHandler();
+        config = DI.getInstance(Config);
+
+        await pfs
+            .stat(config.dbLocation)
+            .then(() => pfs.unlink(config.dbLocation))
+            .catch(() => {});
     });
 
     afterAll(async () => {
         await closeApp(DI);
-        // TODO: Clean up database
+
+        await pfs
+            .stat(config.dbLocation)
+            .then(() => pfs.unlink(config.dbLocation))
+            .catch(() => {});
     });
 
     describe('test for POST /v1/posts', () => {
