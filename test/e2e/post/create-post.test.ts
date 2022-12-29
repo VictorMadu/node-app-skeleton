@@ -15,6 +15,7 @@ describe('test for Post controllers', () => {
 
     afterAll(async () => {
         await closeApp(DI);
+        // TODO: Clean up database
     });
 
     describe('test for POST /v1/posts', () => {
