@@ -1,25 +1,25 @@
 import supertest from 'supertest';
 import pfs from 'fs/promises';
 import { closeApp, startApp } from '../../../src/application';
-import RequestHandler from '../../../src/application/request-handlers/request-handler';
-import RequestHandlerManager from '../../../src/application/request-handlers/request-handler-manager';
-import DependencyInjector from '../../../src/common/dependency-injector';
-import Config from '../../../src/domain/config';
+import Config from '../../../src/core/config';
+import DependencyInjector from '../../../src/lib/dependency-injector';
+import RequestHandlerAdapter from '../../../src/request-handler-adapter/request-handler-adapter';
 
 describe('test for Post controllers', () => {
-    const DI = DependencyInjector.Container;
-    let app: (request: any, response: any) => any;
+    const DI = new DependencyInjector();
+
+    let requestHandler: RequestHandlerAdapter;
     let config: Config;
+    let app: (request: any, response: any) => any;
 
     beforeAll(async () => {
-        await startApp(DI);
-
-        app = DI.getInstance(RequestHandlerManager).getHandler();
+        requestHandler = await startApp(DI);
+        app = requestHandler.getHandler();
         config = DI.getInstance(Config);
 
         await pfs
-            .stat(config.dbLocation)
-            .then(() => pfs.unlink(config.dbLocation))
+            .stat(config.db.skeleton.path)
+            .then(() => pfs.unlink(config.db.skeleton.path))
             .catch(() => {});
     });
 
@@ -27,8 +27,8 @@ describe('test for Post controllers', () => {
         await closeApp(DI);
 
         await pfs
-            .stat(config.dbLocation)
-            .then(() => pfs.unlink(config.dbLocation))
+            .stat(config.db.skeleton.path)
+            .then(() => pfs.unlink(config.db.skeleton.path))
             .catch(() => {});
     });
 
@@ -40,9 +40,14 @@ describe('test for Post controllers', () => {
             beforeAll((done) => {
                 supertest(app)
                     .post('/v1/posts')
-                    .send({ title: 'This is the title', content: 'This is the content' })
+                    .send({
+                        title: 'This is the title',
+                        content: 'This is the content',
+                        unique_name: 'table',
+                    })
                     .then((res) => (response = res))
                     .catch((err) => (testError = err))
+                    .then(() => console.log('RESPONSE', response.body))
                     .finally(done);
             });
 
@@ -59,7 +64,7 @@ describe('test for Post controllers', () => {
             });
 
             test('should return with postId in body', () => {
-                expect(typeof response.body.data.post_id).toBe('string');
+                expect(typeof response.body.data.post_id).toBe('number');
             });
         });
 
@@ -67,6 +72,7 @@ describe('test for Post controllers', () => {
             beforeAll((done) => {
                 supertest(app)
                     .post('/v1/posts')
+                    .send({ title: 'This is the title', content: 'This is the content' })
                     .then((res) => (response = res))
                     .catch((err) => (testError = err))
                     .finally(done);
@@ -80,8 +86,8 @@ describe('test for Post controllers', () => {
                 expect(response.status).toBe(400);
             });
 
-            test('should return a resposne error message', () => {
-                expect(typeof response.body.error).toBe('string');
+            test('should return correct response error', () => {
+                expect(response.body.error).toBe('INVALID_UNIQUE_NAME_DATA_TYPE');
             });
         });
     });

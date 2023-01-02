@@ -1,9 +1,8 @@
 import { startApp, closeApp } from './application';
-import DependencyInjector from './common/dependency-injector';
-
-const DI = DependencyInjector.Container;
+import DependencyInjector from './lib/dependency-injector';
 
 async function main() {
+    const DI = new DependencyInjector();
     let code = 0;
 
     try {
